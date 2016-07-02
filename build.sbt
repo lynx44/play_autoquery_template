@@ -44,7 +44,7 @@ lazy val schema = Project(id = "schema", base = file("schema"))
   .enablePlugins(SbtSquerylAutoSchema)
   .settings(
     name := "schema",
-    squerylBaseTypes := Seq("models.schema.User"),
+    squerylBaseTypes := Seq("org.example.project.schema.Account", "org.example.project.schema.AccountProvider"),
     squerylSchemaName := "Database",
     squerylPackageName := s"${projectNamespace}.squeryl.models",
     squerylDirectoryPath := s"squeryl_models/src/main/scala/${projectNamespace.replace(".", "/")}/squeryl/models",
@@ -58,7 +58,7 @@ lazy val squeryl_models = Project(id = "squeryl_models", base = file("squeryl_mo
   .enablePlugins(SbtSquerylAutoQuery)
   .settings(
     name := "squeryl_models",
-    squerylQueryTraits := Seq("models.schema.Query"),
+    squerylQueryTraits := Seq("org.example.project.schema.Query"),
     squerylQuerySchemaName := s"${projectNamespace}.squeryl.models.Database",
     squerylQuerySchemaBaseClass := s"${projectNamespace}.squeryl.models.DatabaseDefinition",
     squerylQuerySquerylName := s"${projectNamespace}.squeryl.models.Squeryl",
