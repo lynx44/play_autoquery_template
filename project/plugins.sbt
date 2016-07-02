@@ -1,7 +1,7 @@
 import sbt._
 
 // The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.8")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.3")
 
 // web plugins
 

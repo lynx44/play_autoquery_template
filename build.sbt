@@ -7,7 +7,11 @@ val projectNamespace = "org.example.project"
 // in Global is necessary for child projects
 scalaVersion in Global := "2.11.8"
 
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+resolvers ++= Seq(
+  "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+  Resolver.sonatypeRepo("releases"),
+  Resolver.jcenterRepo
+)
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
@@ -23,6 +27,14 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(
     "xyz.mattclifton" %% "autoschema" % "1.0",
     "org.scala-lang" % "scala-reflect" % "2.11.8",
     "xyz.mattclifton" %% "autoquery-components" % "0.1-SNAPSHOT",
+    "com.mohiva" %% "play-silhouette" % "4.0.0-RC1",
+    "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0-RC1",
+    "com.mohiva" %% "play-silhouette-persistence" % "4.0.0-RC1",
+    "com.mohiva" %% "play-silhouette-crypto-jca" % "4.0.0-RC1",
+    "org.webjars" %% "webjars-play" % "2.5.0-2",
+    "net.codingwell" %% "scala-guice" % "4.0.1",
+    "com.iheart" %% "ficus" % "1.2.6",
+    "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
     specs2 % Test
   ),
   unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
