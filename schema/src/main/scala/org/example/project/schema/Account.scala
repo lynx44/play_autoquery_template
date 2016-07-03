@@ -6,5 +6,6 @@ trait Account {
   def lastName: Option[String]
   def email: Option[String]
   def avatarURL: Option[String]
+  def passwordHash: Option[String]
+  def passwordSalt: Option[String]
 }
-

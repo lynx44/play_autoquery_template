@@ -5,8 +5,9 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
 import models.User
-import org.example.project.schema.{AccountProvider, Query}
+import org.example.project.schema.{Account, AccountProvider, Query}
 import play.api.libs.concurrent.Execution.Implicits._
+import xyz.mattclifton.autoquery.components.UpdateValue
 
 import scala.concurrent.Future
 
@@ -36,7 +37,33 @@ class AccountServiceImpl @Inject() (query: Query) extends UserService {
     * @param profile The social profile to save.
     * @return The user for whom the profile was saved.
     */
-  def save(profile: CommonSocialProfile): Future[User] = ???
+  def save(profile: CommonSocialProfile): Future[User] = {
+    retrieve(profile.loginInfo).map(maybeUser => {
+//      val existingUser = maybeUser.fold(
+//        profile.email.flatMap(email => query.getAccounts(filter = _.apply(emails = Seq(email))).execute().headOption.map(toUser(_, profile.loginInfo)))
+//      )(u => Some(u))
+
+      maybeUser.fold({
+          val insertedAccountResult = query.insertAccount(_.apply(profile.firstName, profile.lastName, profile.email, profile.avatarURL)).execute()
+          insertedAccountResult.entity match {
+            case Left(account) => {
+              query.insertAccountProvider(_.apply(account.id, profile.loginInfo.providerID, profile.loginInfo.providerKey)).execute()
+              toUser(account, profile.loginInfo)
+            }
+            case Right(e) => throw e
+          }
+        }
+      )(user => {
+        query.updateAccounts(filter = _.apply(ids = Seq(user.id)), values = _.apply(
+          firstName = UpdateValue(profile.firstName),
+          lastName = UpdateValue(profile.lastName),
+          avatarURL = UpdateValue(profile.avatarURL)
+        )).execute()
+        user
+      })
+
+    })
+  }
 
   def retrieve(loginInfo: LoginInfo): Future[Option[User]] = {
     Future(query.getAccountProviders(
@@ -45,14 +72,20 @@ class AccountServiceImpl @Inject() (query: Query) extends UserService {
   }
 
   private def toUser(accountProvider: AccountProvider): User = {
-    val firstAndLastSeq = accountProvider.account.firstName.toSeq ++ accountProvider.account.lastName.toSeq
-    User(
-      accountProvider.account.id,
-      LoginInfo(accountProvider.providerId, accountProvider.providerKey),
-      accountProvider.account.firstName,
-      accountProvider.account.lastName,
-      if(firstAndLastSeq.nonEmpty) Some(firstAndLastSeq.mkString(" ")) else None,
-      accountProvider.account.email,
-      accountProvider.account.avatarURL)
+    toUser(accountProvider.account, LoginInfo(accountProvider.providerId, accountProvider.providerKey))
   }
+
+  private def toUser(account: Account, loginInfo: LoginInfo): User = {
+    val firstAndLastSeq = account.firstName.toSeq ++ account.lastName.toSeq
+    User(
+      account.id,
+      loginInfo,
+      account.firstName,
+      account.lastName,
+      if(firstAndLastSeq.nonEmpty) Some(firstAndLastSeq.mkString(" ")) else None,
+      account.email,
+      account.avatarURL)
+  }
+
+
 }
