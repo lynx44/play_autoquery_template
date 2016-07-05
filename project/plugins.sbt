@@ -20,3 +20,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.1.0")
 addSbtPlugin("xyz.mattclifton" %% "sbt-squeryl-autoschema" % "0.1-SNAPSHOT")
 
 addSbtPlugin("xyz.mattclifton" %% "sbt-autoquery-squeryl" % "0.1-SNAPSHOT")
+
+addSbtPlugin("com.vmunier" % "sbt-play-scalajs" % "0.3.1")
+
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.10")

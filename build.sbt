@@ -1,3 +1,6 @@
+import sbt.Keys._
+import sbt.Project.projectToRef
+
 name := """play_autoquery_template"""
 
 version := "1.0-SNAPSHOT"
@@ -17,11 +20,47 @@ resolvers ++= Seq(
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(
+val js_projects = Seq(js)
+
+lazy val web = (project in file("web")).enablePlugins(PlayScala).settings(
+  scalaJSProjects := js_projects,
+  pipelineStages := Seq(scalaJSProd),
   libraryDependencies ++= Seq(
     jdbc,
     cache,
     ws,
+    specs2 % Test
+  ),
+  unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
+).aggregate((Seq(js).map(projectToRef)): _*)
+  .dependsOn(shared_js_jvm, rest_models_jvm)
+
+lazy val rest_models = (crossProject.crossType(CrossType.Pure) in file("rest_models")).settings(
+  libraryDependencies ++= Seq(
+    "com.lihaoyi" %% "upickle" % "0.4.1"
+  )
+)
+
+lazy val rest_models_jvm = rest_models.jvm
+lazy val rest_models_js = rest_models.js
+
+lazy val shared_js = (crossProject.crossType(CrossType.Pure) in file("shared_js")).settings(
+)
+
+lazy val shared_js_jvm = shared_js.jvm
+lazy val shared_js_js = shared_js.js
+
+lazy val js = (project in file("js")).settings(
+).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
+  aggregate(shared_js_js).
+  dependsOn(shared_js_js, rest_models_js)
+
+lazy val api = (project in file("api")).enablePlugins(PlayScala).settings(
+  libraryDependencies ++= Seq(
+    jdbc,
+    cache,
+    ws,
+    specs2 % Test,
     "org.squeryl" %% "squeryl" % "0.9.6-SNAPSHOT",
     "org.postgresql" % "postgresql" % "9.4-1202-jdbc4",
     "xyz.mattclifton" %% "autoschema" % "1.0",
@@ -34,11 +73,10 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(
     "org.webjars" %% "webjars-play" % "2.5.0-2",
     "net.codingwell" %% "scala-guice" % "4.0.1",
     "com.iheart" %% "ficus" % "1.2.6",
-    "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
-    specs2 % Test
+    "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3"
   ),
   unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
-).dependsOn(schema, squeryl_models, squeryl_queries)
+).dependsOn(schema, squeryl_models, squeryl_queries, rest_models_jvm)
 
 lazy val schema = Project(id = "schema", base = file("schema"))
   .enablePlugins(SbtSquerylAutoSchema)

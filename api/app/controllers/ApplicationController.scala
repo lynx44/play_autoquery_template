@@ -30,8 +30,9 @@ class ApplicationController @Inject() (
    *
    * @return The result to display.
    */
-  def index = silhouette.SecuredAction.async { implicit request =>
+  def index = silhouette.SecuredAction.async { implicit request => {
     Future.successful(Ok(views.html.home(request.identity)))
+  }
   }
 
   /**
