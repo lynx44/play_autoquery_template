@@ -1,5 +1,7 @@
 import com.google.inject.AbstractModule
 import java.time.Clock
+import com.standardedge.http.HttpRequestDSL
+import com.standardedge.http.apache.ApacheHttpRequestDSL
 import org.example.project.rest.models.JsonParsers
 import services.{ApplicationTimer, AtomicCounter, Counter}
 
@@ -26,7 +28,7 @@ class Module extends AbstractModule {
     // Set AtomicCounter as the implementation for Counter.
     bind(classOf[Counter]).to(classOf[AtomicCounter])
     bind(classOf[JsonParsers]).toInstance(JsonParsers)
-    bind(classOf[ExecutionContext]).toInstance(play.api.libs.concurrent.Execution.Implicits.defaultContext)
+    bind(classOf[HttpRequestDSL]).toInstance(ApacheHttpRequestDSL)
   }
 
 }

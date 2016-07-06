@@ -29,6 +29,9 @@ lazy val web = (project in file("web")).enablePlugins(PlayScala).settings(
     jdbc,
     cache,
     ws,
+    "org.webjars" %% "webjars-play" % "2.5.0-2",
+    "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
+    "com.standardedge" %%% "http-apache" % "0.1-SNAPSHOT",
     specs2 % Test
   ),
   unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )

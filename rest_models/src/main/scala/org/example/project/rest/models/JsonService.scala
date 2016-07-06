@@ -6,20 +6,13 @@ import org.example.project.rest.models.auth.{AccountCreateResource, LoginResourc
 import scala.util.{Failure, Success, Try}
 
 trait JsonService {
-  def parserFor[T](implicit jsonParser: JsonParser[T]): JsonParser[T]
+  def readerFor[T](implicit jsonReader: JsonReader[T]): JsonReader[T]
+  def writerFor[T](implicit jsonWriter: JsonWriter[T]): JsonWriter[T]
 }
-
-trait JsonParsers {
-  val loginResourcePickler = upickle.default.macroRW[LoginResource]
-  implicit lazy val loginResourceParser = UpickleJsonParser[LoginResource]
-
-  val accountCreateResourcePickler = upickle.default.macroRW[AccountCreateResource]
-  implicit lazy val accountCreateResourceParser = UpickleJsonParser[AccountCreateResource]
-}
-object JsonParsers extends JsonParsers
 
 class UpickleJsonService extends JsonService {
-  def parserFor[T](implicit jsonParser: JsonParser[T]): JsonParser[T] = jsonParser
+  def readerFor[T](implicit jsonReader: JsonReader[T]): JsonReader[T] = jsonReader
+  def writerFor[T](implicit jsonWriter: JsonWriter[T]): JsonWriter[T] = jsonWriter
 }
 
 trait JsonParser[T] extends JsonReader[T] with JsonWriter[T]
