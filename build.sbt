@@ -75,6 +75,7 @@ lazy val api = (project in file("api")).enablePlugins(PlayScala).settings(
     "com.iheart" %% "ficus" % "1.2.6",
     "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3"
   ),
+  PlayKeys.devSettings := Seq("play.server.http.port" -> "9001"),
   unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
 ).dependsOn(schema, squeryl_models, squeryl_queries, rest_models_jvm)
 

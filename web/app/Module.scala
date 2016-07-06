@@ -1,6 +1,6 @@
 import com.google.inject.AbstractModule
 import java.time.Clock
-
+import org.example.project.rest.models.JsonParsers
 import services.{ApplicationTimer, AtomicCounter, Counter}
 
 /**
@@ -23,6 +23,7 @@ class Module extends AbstractModule {
     bind(classOf[ApplicationTimer]).asEagerSingleton()
     // Set AtomicCounter as the implementation for Counter.
     bind(classOf[Counter]).to(classOf[AtomicCounter])
+    bind(classOf[JsonParsers]).toInstance(JsonParsers)
   }
 
 }
