@@ -3,6 +3,8 @@ import java.time.Clock
 import org.example.project.rest.models.JsonParsers
 import services.{ApplicationTimer, AtomicCounter, Counter}
 
+import scala.concurrent.ExecutionContext
+
 /**
  * This class is a Guice module that tells Guice how to bind several
  * different types. This Guice module is created when the Play
@@ -24,6 +26,7 @@ class Module extends AbstractModule {
     // Set AtomicCounter as the implementation for Counter.
     bind(classOf[Counter]).to(classOf[AtomicCounter])
     bind(classOf[JsonParsers]).toInstance(JsonParsers)
+    bind(classOf[ExecutionContext]).toInstance(play.api.libs.concurrent.Execution.Implicits.defaultContext)
   }
 
 }
