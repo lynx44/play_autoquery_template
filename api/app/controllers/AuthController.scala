@@ -36,7 +36,7 @@ class AuthController @Inject() (val messagesApi: MessagesApi,
 
   import jsonParsers._
   def login() = silhouette.UnsecuredAction.async(parse.asJson[LoginResource]) { implicit request => {
-    val data = request.body
+    val data = request.body.get
     val credentials = Credentials(data.email, data.password)
     credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
       val result = Ok

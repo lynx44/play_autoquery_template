@@ -36,7 +36,7 @@ class AccountController @Inject() (val messagesApi: MessagesApi,
   import jsonParsers._
   def create() = silhouette.UnsecuredAction.async(parse.asJson[AccountCreateResource]) {
     implicit request => {
-      val data = request.body
+      val data = request.body.get
       val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userService.retrieve(loginInfo).flatMap {
         case Some(user) =>

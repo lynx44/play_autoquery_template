@@ -37,7 +37,8 @@ lazy val web = (project in file("web")).enablePlugins(PlayScala).settings(
 
 lazy val rest_models = (crossProject.crossType(CrossType.Pure) in file("rest_models")).settings(
   libraryDependencies ++= Seq(
-    "com.lihaoyi" %% "upickle" % "0.4.1"
+    "com.lihaoyi" %% "upickle" % "0.4.1",
+    "com.standardedge" %%% "http-core" % "0.1-SNAPSHOT"
   )
 )
 
