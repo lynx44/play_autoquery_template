@@ -1,3 +1,4 @@
+import authorization.JWTSettings
 import com.google.inject.AbstractModule
 import java.time.Clock
 import com.standardedge.http.HttpRequestDSL
@@ -29,6 +30,7 @@ class Module extends AbstractModule {
     bind(classOf[Counter]).to(classOf[AtomicCounter])
     bind(classOf[JsonParsers]).toInstance(JsonParsers)
     bind(classOf[HttpRequestDSL]).toInstance(ApacheHttpRequestDSL)
+    bind(classOf[JWTSettings]).asEagerSingleton()
   }
 
 }

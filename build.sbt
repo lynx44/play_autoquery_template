@@ -32,6 +32,7 @@ lazy val web = (project in file("web")).enablePlugins(PlayScala).settings(
     "org.webjars" %% "webjars-play" % "2.5.0-2",
     "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
     "com.standardedge" %%% "http-apache" % "0.1-SNAPSHOT",
+    "io.igl" %% "jwt" % "1.2.0",
     specs2 % Test
   ),
   unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
@@ -49,6 +50,9 @@ lazy val rest_models_jvm = rest_models.jvm
 lazy val rest_models_js = rest_models.js
 
 lazy val shared_js = (crossProject.crossType(CrossType.Pure) in file("shared_js")).settings(
+  libraryDependencies ++= Seq(
+    "com.standardedge" %%% "http-core" % "0.1-SNAPSHOT"
+  )
 )
 
 lazy val shared_js_jvm = shared_js.jvm

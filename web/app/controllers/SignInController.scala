@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
+import authorization.JWTSettings
 import com.standardedge.http.{HttpResponseCode, URL, HttpRequestDSL}
 import forms.SignInForm
 import org.example.project.rest.models.JsonParsers
@@ -10,12 +11,14 @@ import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Result, Action, Controller}
 
+import scala.Exception
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
 class SignInController @Inject()(
-  val messagesApi: MessagesApi)(
+  val messagesApi: MessagesApi,
+  jwtSettings: JWTSettings)(
   implicit httpRequestDSL: HttpRequestDSL,
   jsonParsers: JsonParsers,
   executionContext: ExecutionContext,
@@ -38,7 +41,13 @@ class SignInController @Inject()(
 
         response.map(r => r.handleJSONResponse[Unit, Result] {
             case Some((responseCode, validation)) => responseCode match {
-              case HttpResponseCode.Ok => Ok
+              case HttpResponseCode.Ok => {
+                val tokenValue = r.handleHeaders(HttpResponseCode.Ok)(
+                  throw new Exception(),
+                  headers => headers.filter(_.name == jwtSettings.headerName).head.value
+                )
+                Ok
+              }
               case _ => Unauthorized
             }
             case None => Unauthorized
