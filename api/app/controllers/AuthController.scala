@@ -9,6 +9,7 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.{ Clock, Credentials }
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
+import com.standardedge.http.{JsonWriter, JsonReader}
 import forms.SignInForm
 import models.services.UserService
 import net.ceedubs.ficus.Ficus._
@@ -17,6 +18,7 @@ import org.example.project.rest.models.auth.LoginResource
 import play.api.Configuration
 import play.api.i18n.{ I18nSupport, Messages, MessagesApi }
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.libs.json._
 import play.api.mvc.Controller
 import utils.auth.DefaultEnv
 
@@ -32,11 +34,11 @@ class AuthController @Inject() (val messagesApi: MessagesApi,
                      socialProviderRegistry: SocialProviderRegistry,
                      configuration: Configuration,
                      clock: Clock,
-                     jsonParsers: JsonParsers) extends Controller with I18nSupport with JsonBodyParsers {
+                     jsonParsers: JsonParsers) extends Controller with I18nSupport with JsonParserConversions {
 
   import jsonParsers._
-  def login() = silhouette.UnsecuredAction.async(parse.asJson[LoginResource]) { implicit request => {
-    val data = request.body.get
+  def login() = silhouette.UnsecuredAction.async(parse.json[LoginResource]) { implicit request => {
+    val data = request.body
     val credentials = Credentials(data.email, data.password)
     credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
       val result = Ok

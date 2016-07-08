@@ -81,6 +81,7 @@ lazy val api = (project in file("api")).enablePlugins(PlayScala).settings(
     "org.webjars" %% "webjars-play" % "2.5.0-2",
     "net.codingwell" %% "scala-guice" % "4.0.1",
     "com.iheart" %% "ficus" % "1.2.6",
+    "com.iheart" %% "play-swagger" % "0.2.1-PLAY2.5",
     "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3"
   ),
   PlayKeys.devSettings := Seq("play.server.http.port" -> "9001"),

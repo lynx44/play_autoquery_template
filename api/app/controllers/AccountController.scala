@@ -19,24 +19,25 @@ import utils.auth.DefaultEnv
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccountController @Inject() (val messagesApi: MessagesApi,
-                                   silhouette: Silhouette[DefaultEnv],
-                                   userService: UserService,
-                                   authInfoRepository: AuthInfoRepository,
-                                   credentialsProvider: CredentialsProvider,
-                                   socialProviderRegistry: SocialProviderRegistry,
-                                   configuration: Configuration,
-                                   clock: Clock,
-                                   avatarService: AvatarService,
-                                   passwordHasher: PasswordHasher,
-                                   jsonParsers: JsonParsers)(
-                                   implicit executionContext: ExecutionContext) extends Controller with I18nSupport with JsonBodyParsers {
-
+class AccountController @Inject()
+  (val messagesApi: MessagesApi,
+   silhouette: Silhouette[DefaultEnv],
+   userService: UserService,
+   authInfoRepository: AuthInfoRepository,
+   credentialsProvider: CredentialsProvider,
+   socialProviderRegistry: SocialProviderRegistry,
+   configuration: Configuration,
+   clock: Clock,
+   avatarService: AvatarService,
+   passwordHasher: PasswordHasher,
+   jsonParsers: JsonParsers)(
+   implicit executionContext: ExecutionContext)
+  extends Controller with I18nSupport with JsonParserConversions {
 
   import jsonParsers._
-  def create() = silhouette.UnsecuredAction.async(parse.asJson[AccountCreateResource]) {
+  def create() = silhouette.UnsecuredAction.async(parse.json[AccountCreateResource]) {
     implicit request => {
-      val data = request.body.get
+      val data = request.body
       val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userService.retrieve(loginInfo).flatMap {
         case Some(user) =>
