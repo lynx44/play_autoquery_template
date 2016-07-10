@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
+import akka.util.ByteString
 import com.mohiva.play.silhouette.api.Authenticator.Implicits._
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
@@ -17,6 +18,7 @@ import org.example.project.TestResource
 import org.example.project.rest.models.{JsonParsers, JsonService}
 import org.example.project.rest.models.auth.LoginResource
 import play.api.Configuration
+import play.api.http.Writeable
 import play.api.i18n.{ I18nSupport, Messages, MessagesApi }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json._
@@ -43,8 +45,9 @@ class AuthController @Inject() (val messagesApi: MessagesApi,
     Ok
   }
 
-  def test = Action.validated[TestResource, OkStatus, UnauthorizedStatus](parse.json[TestResource]){ request =>
-    Ok
+  implicit def jsonWriteable[A](implicit jsonWriter: JsonWriter[A]): Writeable[A] = new Writeable[A](b => ByteString(Json.toJson(b).toString()), Some("application/json"))
+  def test = Action.validated[TestResource, OkWithContent[LoginResource], UnauthorizedStatus](parse.json[TestResource]){ request =>
+    Ok.withContent(LoginResource("email", "password", "string"))
   }
 
   def test2 = silhouette.SecuredAction(parse.json[TestResource]){ request =>
@@ -55,9 +58,9 @@ class AuthController @Inject() (val messagesApi: MessagesApi,
     Ok
   }
 
-  def testNormal = Action(parse.json[TestResource]){ request =>
-    Ok
-  }
+//  def testNormal = Action(parse.json[TestResource]){ request =>
+//    Ok(Json.toJson(LoginResource("email", "password", "string")))
+//  }
 
 //  def test3 = ValidatedAction[TestResource, OkStatus](parse.json[TestResource]){ request =>
 //    Ok
