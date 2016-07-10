@@ -43,7 +43,7 @@ class AuthController @Inject() (val messagesApi: MessagesApi,
     Ok
   }
 
-  def test = silhouette.SecuredAction.validated[TestResource, OkStatus, UnauthorizedStatus](parse.json[TestResource]){ request =>
+  def test = Action.validated[TestResource, OkStatus, UnauthorizedStatus](parse.json[TestResource]){ request =>
     Ok
   }
 
@@ -52,6 +52,10 @@ class AuthController @Inject() (val messagesApi: MessagesApi,
   }
 
   def test1 = Action.validated[TestResource, OkStatus](parse.json[TestResource]){ request =>
+    Ok
+  }
+
+  def testNormal = Action(parse.json[TestResource]){ request =>
     Ok
   }
 

@@ -22,9 +22,11 @@ class ApplicationSpec extends Specification {
     "send 404 on a bad request" in new WithApplication{
 //      private val toolBox = scala.reflect.runtime.currentMirror.mkToolBox()
 //      toolBox.define(typeOf[AuthController].members.head.asMethod)
-      println(typeOf[AuthController].members.head.name)
-      println(s"'${typeOf[AuthController].members.drop(1).head.name}' / ${typeOf[AuthController].members.drop(1).head.owner}")
+//      println(typeOf[AuthController].members.head.name)
+      private val testMethod = typeOf[AuthController].members.drop(3).head.asMethod
+      println(s"'${testMethod.name}'")
 
+      println(testMethod.paramLists.map(_.name))
 //      println(typeOf[AuthController].members.mkString("\n"))
 //      println(typeOf[AuthController].members.map(x => (x.name, x.owner)))
       println(typeOf[AuthController].members.filter {
@@ -32,6 +34,7 @@ class ApplicationSpec extends Specification {
         case _ => false
       }.map(_.name))
 
+      testMethod
       println(typeOf[AuthController].members.drop(1).head.asTerm)
     }
 

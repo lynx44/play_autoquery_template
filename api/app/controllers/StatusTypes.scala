@@ -29,6 +29,19 @@ trait StatusTypes extends Results {
   trait StatusOf {
     def result: Result
   }
+
+//  class ValidatedActionResult1[T, S1 <: ValidatedResult](action: ValidatedResult) extends Action[T] {
+//    def parser: BodyParser[T] = action.parser
+//
+//    def apply(request: Request[T]): Future[Result] = action.apply(request)
+//  }
+//
+  class ValidatedActionResult2[T, S1 <: ValidatedResult, S2 <: ValidatedResult](action: Action[T]) extends Action[T] {
+    def parser: BodyParser[T] = action.parser
+
+    def apply(request: Request[T]): Future[Result] = action.apply(request)
+  }
+
   class StatusOf2[S1 <: ValidatedResult, S2 <: ValidatedResult](s1: Option[S1], s2: Option[S2]) extends StatusOf {
 
     def result = s1.getOrElse(s2.get)
@@ -52,9 +65,10 @@ trait StatusTypes extends Results {
       Future.successful(block(req))
     }
 
-    def apply[A, S1 <: ValidatedResult, S2 <: ValidatedResult](bodyParser: BodyParser[A])(block: R[A] => StatusOf2[S1, S2])(implicit s1tag: TypeTag[S1], s2tag: TypeTag[S2]): Action[A] = action.async(bodyParser) { req: R[A] =>
-      Future.successful(block(req).result)
-    }
+    def apply[A, S1 <: ValidatedResult, S2 <: ValidatedResult](bodyParser: BodyParser[A])(block: R[A] => StatusOf2[S1, S2])(implicit s1tag: TypeTag[S1], s2tag: TypeTag[S2]): ValidatedActionResult2[A, S1, S2] =
+      new ValidatedActionResult2[A, S1, S2](action.async(bodyParser) { req: R[A] =>
+        Future.successful(block(req).result)
+      })
   }
 }
 
