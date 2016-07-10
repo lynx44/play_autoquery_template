@@ -39,17 +39,25 @@ class AuthController @Inject() (val messagesApi: MessagesApi,
 
   import jsonParsers._
 
-  def test = ValidatedAction[TestResource, OkStatus, UnauthorizedStatus](parse.json[TestResource]){ request =>
-    if(true) {
-      Ok
-    } else {
-      Unauthorized
-    }
-  }
-
-  def test1 = ValidatedAction[TestResource, OkStatus](parse.json[TestResource]){ request =>
+  def submit = silhouette.UnsecuredAction.validated[TestResource, OkStatus, UnauthorizedStatus](parse.json[TestResource]) { request =>
     Ok
   }
+
+  def test = silhouette.SecuredAction.validated[TestResource, OkStatus, UnauthorizedStatus](parse.json[TestResource]){ request =>
+    Ok
+  }
+
+  def test2 = silhouette.SecuredAction(parse.json[TestResource]){ request =>
+    Ok
+  }
+
+  def test1 = Action.validated[TestResource, OkStatus](parse.json[TestResource]){ request =>
+    Ok
+  }
+
+//  def test3 = ValidatedAction[TestResource, OkStatus](parse.json[TestResource]){ request =>
+//    Ok
+//  }
 
   def login() = Action.async(parse.json[LoginResource]) { implicit request => {
     val data = request.body

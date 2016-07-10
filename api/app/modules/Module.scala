@@ -1,10 +1,11 @@
 package modules
 
 import com.google.inject.AbstractModule
+import net.codingwell.scalaguice.ScalaModule
 import org.example.project.rest.models.JsonParsers
 import org.example.project.schema.Query
 
-class Module extends AbstractModule {
+class Module extends AbstractModule with ScalaModule {
 
   override def configure() = {
     bind(classOf[MigratorInitializer]) asEagerSingleton()
