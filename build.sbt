@@ -10,7 +10,7 @@ val projectNamespace = "org.example.project"
 // in Global is necessary for child projects
 scalaVersion in Global := "2.11.8"
 
-resolvers ++= Seq(
+resolvers in Global ++= Seq(
   "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
   Resolver.sonatypeRepo("releases"),
   Resolver.jcenterRepo
@@ -81,8 +81,10 @@ lazy val api = (project in file("api")).enablePlugins(PlayScala).settings(
     "org.webjars" %% "webjars-play" % "2.5.0-2",
     "net.codingwell" %% "scala-guice" % "4.0.1",
     "com.iheart" %% "ficus" % "1.2.6",
-    "com.iheart" %% "play-swagger" % "0.2.1-PLAY2.5",
-    "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3"
+    "com.iheart" %% "play-swagger" % "0.3.3-PLAY2.5",
+    "org.webjars" % "swagger-ui" % "2.1.4",
+    "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
+    "org.scala-lang" % "scala-reflect" % scalaVersion.value
   ),
   PlayKeys.devSettings := Seq("play.server.http.port" -> "9001"),
   unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )

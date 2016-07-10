@@ -5,6 +5,8 @@ import javax.inject.Inject
 import com.iheart.playSwagger.SwaggerSpecGenerator
 import com.mohiva.play.silhouette.api.{ LogoutEvent, Silhouette }
 import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
+import org.example.project.TestResource
+import org.example.project.rest.models.auth.LoginResource
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc.{Action, Controller}
 import utils.auth.DefaultEnv
@@ -47,11 +49,12 @@ class ApplicationController @Inject() (
     silhouette.env.authenticatorService.discard(request.authenticator, result)
   }
 
-  implicit val cl = getClass.getClassLoader
-  val domainPackage = "org.example.com.rest.models"
-  private lazy val generator = SwaggerSpecGenerator(domainPackage)
+  implicit val cl = getClass.getClassLoader//classOf[TestResource].getClassLoader
+  private lazy val generator = SwaggerSpecGenerator("org.example.project")
 
   def spec = Action.async { _ =>
     Future.fromTry(generator.generate()).map(Ok(_)) //generate() can also taking in an optional arg of the route file name.
   }
 }
+
+
